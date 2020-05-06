@@ -16,6 +16,9 @@
 #include <sstream>
 #include <fstream>
 
+#include <stdio.h>
+#include <cerver/version.h>
+
 using namespace std::literals::chrono_literals;
 
 std::string readFile(const std::string& fileName) {
@@ -77,6 +80,11 @@ std::ostream& operator<<(std::ostream& os, mbgl::Response::Error::Reason r) {
 }
 
 int main(int argc, char *argv[]) {
+
+    printf ("\n");
+    cerver_version_print_full ();
+    printf ("\n");
+
     args::ArgumentParser argumentParser("Mapbox GL offline tool");
     args::HelpFlag helpFlag(argumentParser, "help", "Display this help menu", {'h', "help"});
 
@@ -254,21 +262,23 @@ int main(int argc, char *argv[]) {
 
     std::signal(SIGINT, [] (int) { stop(); });
 
-    fileSource->createOfflineRegion(
-        definition, metadata, [&](mbgl::expected<OfflineRegion, std::exception_ptr> region_) {
-            if (!region_) {
-                std::cerr << "Error creating region: " << util::toString(region_.error()) << std::endl;
-                loop.stop();
-                exit(1);
-            } else {
-                assert(region_);
-                region = std::make_unique<OfflineRegion>(std::move(*region_));
-                fileSource->setOfflineRegionObserver(*region,
-                                                     std::make_unique<Observer>(*region, fileSource, loop, mergePath));
-                fileSource->setOfflineRegionDownloadState(*region, OfflineRegionDownloadState::Active);
-            }
-        });
+    // fileSource->createOfflineRegion(
+    //     definition, metadata, [&](mbgl::expected<OfflineRegion, std::exception_ptr> region_) {
+    //         if (!region_) {
+    //             std::cerr << "Error creating region: " << util::toString(region_.error()) << std::endl;
+    //             loop.stop();
+    //             exit(1);
+    //         } else {
+    //             assert(region_);
+    //             region = std::make_unique<OfflineRegion>(std::move(*region_));
+    //             fileSource->setOfflineRegionObserver(*region,
+    //                                                  std::make_unique<Observer>(*region, fileSource, loop, mergePath));
+    //             fileSource->setOfflineRegionDownloadState(*region, OfflineRegionDownloadState::Active);
+    //         }
+    //     });
 
-    loop.run();
+    // loop.run();
+
     return 0;
+
 }

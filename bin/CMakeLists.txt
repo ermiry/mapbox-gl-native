@@ -20,6 +20,7 @@ add_executable(
 target_link_libraries(
     mbgl-offline
     PRIVATE Mapbox::Base::Extras::args mbgl-compiler-options mbgl-core
+    cerver
 )
 
 add_executable(
